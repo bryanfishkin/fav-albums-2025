@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Best of 2025 | Vinyl Collection</title>
-    
-    <!-- 1. Tailwind CSS -->
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 2. React & ReactDOM -->
+
+    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    
-    <!-- 3. Babel -->
+
+    <!-- Babel (for in-browser JSX) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0c0a09; }
@@ -25,586 +25,407 @@
     </style>
 </head>
 <body class="bg-stone-900 text-stone-100">
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-        
-        // --- ICON DEFINITIONS ---
-        const Icon = ({ children, ...props }) => (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-            {children}
-          </svg>
-        );
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-        const Play = (props) => <Icon {...props}><polygon points="5 3 19 12 5 21 5 3" /></Icon>;
-        const Pause = (props) => <Icon {...props}><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></Icon>;
-        const SkipForward = (props) => <Icon {...props}><polygon points="5 4 15 12 5 20 5 4" /><line x1="19" x2="19" y1="5" y2="19" /></Icon>;
-        const SkipBack = (props) => <Icon {...props}><polygon points="19 20 9 12 19 4 19 20" /><line x1="5" x2="5" y1="19" y2="5" /></Icon>;
-        const Disc = (props) => <Icon {...props}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" /></Icon>;
-        const X = (props) => <Icon {...props}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></Icon>;
-        const Volume2 = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></Icon>;
-        const User = (props) => <Icon {...props}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></Icon>;
+    // --- ICONS ---
+    const Icon = ({ children, ...props }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        {children}
+      </svg>
+    );
+    const Play = (props) => <Icon {...props}><polygon points="5 3 19 12 5 21 5 3" /></Icon>;
+    const Pause = (props) => <Icon {...props}><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></Icon>;
+    const SkipForward = (props) => <Icon {...props}><polygon points="5 4 15 12 5 20 5 4" /><line x1="19" x2="19" y1="5" y2="19" /></Icon>;
+    const SkipBack = (props) => <Icon {...props}><polygon points="19 20 9 12 19 4 19 20" /><line x1="5" x2="5" y1="19" y2="5" /></Icon>;
+    const Disc = (props) => <Icon {...props}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" /></Icon>;
+    const X = (props) => <Icon {...props}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></Icon>;
+    const Volume2 = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></Icon>;
+    const User = (props) => <Icon {...props}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></Icon>;
+    const ChevronDown = (props) => <Icon {...props}><path d="M6 9l6 6 6-6" /></Icon>;
+    const ChevronUp = (props) => <Icon {...props}><path d="M18 15l-6-6-6 6" /></Icon>;
 
+    // --- DATA ---
+    const ALBUMS = [
+      { id: 1, title: "Headlights", artist: "Alex G", genre: "Indie Rock", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/c/c5/Alex_G_-_Headlights.png", color: "from-blue-900 to-slate-900", blurb: "Alex G continues his reign of lo-fi mastery with a hauntingly beautiful record. IMO, a timeless classic from one of Indie's most seasoned veterans. You'll wanna move to Philly too!!!", spotifyUrl: "https://open.spotify.com/track/53NgnwT6xCOxEuVmIBDFpy?si=a4b3c23e65cd42a9", rating: 9.0 },
+      { id: 2, title: "NEVER ENOUGH", artist: "Turnstile", genre: "Hardcore / Punk", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/2/2b/Never_Enough_%28Turnstile%29.png", color: "from-pink-600 to-orange-500", blurb: "High energy, infectious grooves, and the signature Turnstile bounce. Many a Prospect Park loop completed to this album. High energy, intense, but with pop catchiness and accessibility. So much fun!", spotifyUrl: "https://open.spotify.com/track/6ONyZXRIEiZWWnAA1F5YvH?si=d52360dea42544db", rating: 9.5 },
+      { id: 3, title: "Let God Sort 'Em Out", artist: "Clipse", genre: "Hip Hop", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/8/8d/Let_God_Sort_Em_Out.jpg", color: "from-stone-500 to-stone-800", blurb: "The reunion we've been waiting for. Gritty, lyrical, and essential. A 'reunion' record for the ages. Not a single word wasted on this album. And incredible production from Pharrell.", spotifyUrl: "https://open.spotify.com/track/0xaQ86cGRgcF8wwP1SkXsb?si=773e7d7d28c34473", rating: 9.2 },
+      { id: 4, title: "Getting Killed", artist: "Geese", genre: "Post-Punk", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/b/b9/Geese_-_Getting_Killed.jpg", color: "from-red-700 to-black", blurb: "Anxious, energetic, and completely unpredictable art-punk. Don't let all the hype detract from what Cameron Winter and Geese gave us.", spotifyUrl: "https://open.spotify.com/track/5cbDTZG8lBJqVVa2zqROPI?si=fe0a5236e63d4a79", rating: 8.8 },
+      { id: 5, title: "Black British Music", artist: "Jim Legxacy", genre: "Alt / Emo Rap", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/f/fb/Black_British_Music_%282025%29_Album_Cover.jpg", color: "from-emerald-800 to-black", blurb: "Genre-bending innovation that redefines the London sound. The UK's Jim Legxacy is going to be a star.", spotifyUrl: "https://open.spotify.com/track/7p6LdEcYnSbw68yJDbUjxD?si=22d9a43158924e71", rating: 9.1 },
+      { id: 6, title: "MAYHEM", artist: "Lady Gaga", genre: "Pop", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/d/db/Lady_Gaga_-_Mayhem.png", color: "from-purple-600 to-rose-500", blurb: "A return to the dancefloor with chaotic, infectious pop anthems. I want to dock her points for including 'Die with a Smile' for the #streams, but the rest of the album is too damn good.", spotifyUrl: "https://open.spotify.com/track/2rvd6akG8qEtBNUvQpN7iY?si=5d67fa0f327543b1", rating: 8.9 },
+      { id: 7, title: "Deadbeat", artist: "Tame Impala", genre: "Psych Rock", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/f/f1/DeadbeatTameImpala.jpeg", color: "from-indigo-500 to-purple-800", blurb: "Kevin Parker dives deeper into synth textures and psychedelic grooves. Negative reviews be damned!", spotifyUrl: "https://open.spotify.com/track/1NXbNEAcPvY5G1xvfN57aA?si=58fd5ef16ede4a3a", rating: 9.3 },
+      { id: 8, title: "LUX", artist: "ROSALÍA", genre: "Alt Pop / Urbano", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/a/a1/Rosal%C3%ADa_%E2%80%93_Lux_%28album_cover%29.png", color: "from-red-600 to-rose-900", blurb: "Experimental, bold, and undeniably catchy. I'd put ROSALÍA's voice up against anybody's.", spotifyUrl: "https://open.spotify.com/track/4oVO4fGNRRvEn0CRuFO4qv?si=ec14de75f2aa4d7a", rating: 9.4 },
+      { id: 9, title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", genre: "Urbano / Trap", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/DtMF_Alb%C3%BAm.png/500px-DtMF_Alb%C3%BAm.png", color: "from-orange-500 to-yellow-600", blurb: "Benito reflecting on fame with summer beats and introspective lyrics. I can't WAIT for the Super Bowl.", spotifyUrl: "https://open.spotify.com/track/2lTm559tuIvatlT1u0JYG2?si=373ee35ad3c94d7b", rating: 8.7 },
+      { id: 10, title: "SABLE, fABLE", artist: "Bon Iver", genre: "Indie Folk", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/SABLE%2C_fABLE_Bon_Iver_album_cover.jpg/500px-SABLE%2C_fABLE_Bon_Iver_album_cover.jpg", color: "from-stone-400 to-stone-600", blurb: "A stripped-back, emotional journey through winter landscapes.", spotifyUrl: "https://open.spotify.com/track/4XosapYiYaXGcxc83p3DD9?si=974f65aeab514d63", rating: 9.0 },
+      { id: 11, title: "For Melancholy Brunettes", artist: "Japanese Breakfast", genre: "Indie Pop", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/e/e0/Japanese_Breakfast_-_For_Melancholy_Brunettes_%28and_Sad_Women%29.png", color: "from-yellow-500 to-orange-400", blurb: "Michelle Zauner crafts a dreamy, nostalgic pop record perfect for rainy days.", spotifyUrl: "https://open.spotify.com/track/02olsPYJypEE0IyuaGS4K4?si=a93d84f2156c4088", rating: 8.5 },
+      { id: 12, title: "Snocaps", artist: "Snocaps", genre: "Indie / Alt", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/8/8e/Snocaps_album_cover.jpg", color: "from-cyan-300 to-blue-600", blurb: "Cool, crisp production meets warm melodies. A hidden gem of 2025.", spotifyUrl: "https://open.spotify.com/track/6L6zjdrq9tk2a3orhgTSPa?si=6b21536023c04a34", rating: 8.3 },
+      { id: 13, title: "Live Laugh Love", artist: "Earl Sweatshirt", genre: "Hip Hop / Abstract", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/3/37/Earl_Sweatshirt_Live_Laugh_Love.jpg", color: "from-stone-600 to-black", blurb: "A surprisingly ironic title for Earl's dense, complex lyricism.", spotifyUrl: "https://open.spotify.com/track/2zksWgfSYzhTq9YGOBS2HP?si=fd2df7d3a15947fc", rating: 8.8 },
+      { id: 14, title: "I'll Be Waving...", artist: "Hayden Pedigo", genre: "American Primitivism", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/0/09/Hayden_Pedigo_%E2%80%93_I%27ll_Be_Waving_as_You_Drive_Away.jpg", color: "from-amber-600 to-yellow-800", blurb: "Cinematic guitar instrumentals that paint a picture of the dusty American West.", spotifyUrl: "https://open.spotify.org/track/47yRyhwrCVXkrjmTXye7Ot?si=c6847518eaa24bf3", rating: 8.6 },
+      { id: 15, title: "SISTER", artist: "Frost Children", genre: "Hyperpop / Electronic", year: "2025", coverUrl: "https://upload.wikimedia.org/wikipedia/en/8/85/Frost_Children_%E2%80%93_Sister.jpg", color: "from-fuchsia-500 to-purple-700", blurb: "Frenetic, glitchy, and impossibly fun. A sugar rush of an album.", spotifyUrl: "https://open.spotify.com/track/3O2VWQ06QUg6CDV5vF8kAz?si=713a05bc7a7d4e30", rating: 8.4 }
+    ];
 
-        const ALBUMS = [
-          {
-            id: 1,
-            title: "Headlights",
-            artist: "Alex G",
-            genre: "Indie Rock",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/c/c5/Alex_G_-_Headlights.png",
-            color: "from-blue-900 to-slate-900",
-            description: "Alex G continues his reign of lo-fi mastery with a hauntingly beautiful record.",
-            blurb: "IMO, a timeless classic from one of Indie's most seasoned veterans. You'll wanna move to Philly too!!!",
-            spotifyUrl: "https://open.spotify.com/track/53NgnwT6xCOxEuVmIBDFpy?si=a4b3c23e65cd42a9", 
-            rating: 9.0
-          },
-          {
-            id: 2,
-            title: "NEVER ENOUGH",
-            artist: "Turnstile",
-            genre: "Hardcore / Punk",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/2/2b/Never_Enough_%28Turnstile%29.png",
-            color: "from-pink-600 to-orange-500",
-            description: "High energy, infectious grooves, and the signature Turnstile bounce.",
-            blurb: "Many a Prospect Park loop completed to this album. High energy, intense, but with pop catchiness and accessibility. So much fun!",
-            spotifyUrl: "https://open.spotify.com/track/6ONyZXRIEiZWWnAA1F5YvH?si=d52360dea42544db",
-            rating: 9.5
-          },
-          {
-            id: 3,
-            title: "Let God Sort 'Em Out",
-            artist: "Clipse",
-            genre: "Hip Hop",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/8/8d/Let_God_Sort_Em_Out.jpg",
-            color: "from-stone-500 to-stone-800",
-            description: "The reunion we've been waiting for. Gritty, lyrical, and essential.",
-            blurb: "A 'reunion' record for the ages. Not a single word wasted on this album. And incredible production from Pharrell.",
-            spotifyUrl: "https://open.spotify.com/track/0xaQ86cGRgcF8wwP1SkXsb?si=773e7d7d28c34473",
-            rating: 9.2
-          },
-          {
-            id: 4,
-            title: "Getting Killed",
-            artist: "Geese",
-            genre: "Post-Punk",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/b/b9/Geese_-_Getting_Killed.jpg",
-            color: "from-red-700 to-black",
-            description: "Anxious, energetic, and completely unpredictable art-punk.",
-            blurb: "Don't let all the hype detract from what Cameron Winter and Geese gave us. I will long regret not seeing them in concert (when it was affordable)!",
-            spotifyUrl: "https://open.spotify.com/track/5cbDTZG8lBJqVVa2zqROPI?si=fe0a5236e63d4a79",
-            rating: 8.8
-          },
-          {
-            id: 5,
-            title: "Black British Music",
-            artist: "Jim Legxacy",
-            genre: "Alt / Emo Rap",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/f/fb/Black_British_Music_%282025%29_Album_Cover.jpg",
-            color: "from-emerald-800 to-black",
-            description: "Genre-bending innovation that redefines the London sound.",
-            blurb: "The UK's Jim Legxacy is going to be a star.",
-            spotifyUrl: "https://open.spotify.com/track/7p6LdEcYnSbw68yJDbUjxD?si=22d9a43158924e71", 
-            rating: 9.1
-          },
-          {
-            id: 6,
-            title: "MAYHEM",
-            artist: "Lady Gaga",
-            genre: "Pop",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/d/db/Lady_Gaga_-_Mayhem.png",
-            color: "from-purple-600 to-rose-500",
-            description: "A return to the dancefloor with chaotic, infectious pop anthems.",
-            blurb: "I want to dock her points for including 'Die with a Smile' for the #streams, but the rest of the album is too damn good.",
-            spotifyUrl: "https://open.spotify.com/track/2rvd6akG8qEtBNUvQpN7iY?si=5d67fa0f327543b1", 
-            rating: 8.9
-          },
-          {
-            id: 7,
-            title: "Deadbeat",
-            artist: "Tame Impala",
-            genre: "Psych Rock",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/f/f1/DeadbeatTameImpala.jpeg",
-            color: "from-indigo-500 to-purple-800",
-            description: "Kevin Parker dives deeper into synth textures and psychedelic grooves.",
-            blurb: "Negative reviews be damned! The singles (namely 'Loser' and 'Dracula') will long stay in rotation for me.",
-            spotifyUrl: "https://open.spotify.com/track/1NXbNEAcPvY5G1xvfN57aA?si=58fd5ef16ede4a3a", 
-            rating: 9.3
-          },
-          {
-            id: 8,
-            title: "LUX",
-            artist: "ROSALÍA",
-            genre: "Alt Pop / Urbano",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/a/a1/Rosal%C3%ADa_%E2%80%93_Lux_%28album_cover%29.png",
-            color: "from-red-600 to-rose-900",
-            description: "Experimental, bold, and undeniably catchy.",
-            blurb: "I'd put ROSALÍA's voice up against anybody's.",
-            spotifyUrl: "https://open.spotify.com/track/4oVO4fGNRRvEn0CRuFO4qv?si=ec14de75f2aa4d7a", 
-            rating: 9.4
-          },
-          {
-            id: 9,
-            title: "DeBÍ TiRAR MáS FOToS",
-            artist: "Bad Bunny",
-            genre: "Urbano / Trap",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/DtMF_Alb%C3%BAm.png/500px-DtMF_Alb%C3%BAm.png",
-            color: "from-orange-500 to-yellow-600",
-            description: "Benito reflecting on fame with summer beats and introspective lyrics.",
-            blurb: "I can't WAIT for the Super Bowl.",
-            spotifyUrl: "https://open.spotify.com/track/2lTm559tuIvatlT1u0JYG2?si=373ee35ad3c94d7b",
-            rating: 8.7
-          },
-          {
-            id: 10,
-            title: "SABLE, fABLE",
-            artist: "Bon Iver",
-            genre: "Indie Folk",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/SABLE%2C_fABLE_Bon_Iver_album_cover.jpg/500px-SABLE%2C_fABLE_Bon_Iver_album_cover.jpg",
-            color: "from-stone-400 to-stone-600",
-            description: "A stripped-back, emotional journey through winter landscapes.",
-            blurb: "Enjoyed hearing Vernon speak about wanting to shake the Indie Sadboi rep. Try listening to 'Everything is Peaceful Love' without smiling. Impossible!",
-            spotifyUrl: "https://open.spotify.com/track/4XosapYiYaXGcxc83p3DD9?si=974f65aeab514d63",
-            rating: 9.0
-          },
-          {
-            id: 11,
-            title: "For Melancholy Brunettes",
-            artist: "Japanese Breakfast",
-            genre: "Indie Pop",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/e/e0/Japanese_Breakfast_-_For_Melancholy_Brunettes_%28and_Sad_Women%29.png",
-            color: "from-yellow-500 to-orange-400",
-            description: "Michelle Zauner crafts a dreamy, nostalgic pop record perfect for rainy days.",
-            blurb: "It was wonderful getting to see/hear jbrekkie perform this record live. Philly legend!",
-            spotifyUrl: "https://open.spotify.com/track/02olsPYJypEE0IyuaGS4K4?si=a93d84f2156c4088",
-            rating: 8.5
-          },
-          {
-            id: 12,
-            title: "Snocaps",
-            artist: "Snocaps",
-            genre: "Indie / Alt",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/8/8e/Snocaps_album_cover.jpg",
-            color: "from-cyan-300 to-blue-600",
-            description: "Cool, crisp production meets warm melodies. A hidden gem of 2025.",
-            blurb: "Had no idea we'd get a Waxahatchee side project this year, but what a treat it was! Great fall music.",
-            spotifyUrl: "https://open.spotify.com/track/6L6zjdrq9tk2a3orhgTSPa?si=6b21536023c04a34", 
-            rating: 8.3
-          },
-          {
-            id: 13,
-            title: "Live Laugh Love",
-            artist: "Earl Sweatshirt",
-            genre: "Hip Hop / Abstract",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/3/37/Earl_Sweatshirt_Live_Laugh_Love.jpg",
-            color: "from-stone-600 to-black",
-            description: "A surprisingly ironic title for Earl's dense, complex lyricism.",
-            blurb: "The album title (unironically!) says it all. Earl, now a father, is at peace.",
-            spotifyUrl: "https://open.spotify.com/track/2zksWgfSYzhTq9YGOBS2HP?si=fd2df7d3a15947fc", 
-            rating: 8.8
-          },
-          {
-            id: 14,
-            title: "I'll Be Waving...",
-            artist: "Hayden Pedigo",
-            genre: "American Primitivism",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/0/09/Hayden_Pedigo_%E2%80%93_I%27ll_Be_Waving_as_You_Drive_Away.jpg",
-            color: "from-amber-600 to-yellow-800",
-            description: "Cinematic guitar instrumentals that paint a picture of the dusty American West.",
-            blurb: "What I thought would be good background music while I worked turned out to be much, much more.",
-            spotifyUrl: "https://open.spotify.com/track/47yRyhwrCVXkrjmTXye7Ot?si=c6847518eaa24bf3", 
-            rating: 8.6
-          },
-          {
-            id: 15,
-            title: "SISTER",
-            artist: "Frost Children",
-            genre: "Hyperpop / Electronic",
-            year: "2025",
-            coverUrl: "https://upload.wikimedia.org/wikipedia/en/8/85/Frost_Children_%E2%80%93_Sister.jpg",
-            color: "from-fuchsia-500 to-purple-700",
-            description: "Frenetic, glitchy, and impossibly fun. A sugar rush of an album.",
-            blurb: "Awesome EDM album that is both nostalgic and forward-looking. Total sugar rush.",
-            spotifyUrl: "https://open.spotify.com/track/3O2VWQ06QUg6CDV5vF8kAz?si=713a05bc7a7d4e30", 
-            rating: 8.4
+    // Helper to extract Spotify ID from URL
+    const getSpotifyId = (url) => {
+      if (!url) return null;
+      try {
+        const parts = url.split('/track/');
+        if (parts.length > 1) {
+          return parts[1].split('?')[0];
+        }
+      } catch (e) {
+        return null;
+      }
+      return null;
+    };
+
+    function App() {
+      const [currentAlbum, setCurrentAlbum] = useState(ALBUMS[0]);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [showAbout, setShowAbout] = useState(false);
+      const [progress, setProgress] = useState(0);
+      const [volume, setVolume] = useState(70);
+      const [openAccordion, setOpenAccordion] = useState(null); // mobile-only accordion state
+
+      const requestRef = useRef();
+      const audioRef = useRef(null);
+
+      // Audio handling (native previewUrl support optional)
+      useEffect(() => {
+        if (!audioRef.current) return;
+        audioRef.current.volume = volume / 100;
+
+        if (isPlaying && currentAlbum.previewUrl) {
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(error => console.log("Audio playback failed:", error));
           }
-        ];
-
-
-        // Helper to extract Spotify ID from URL
-        const getSpotifyId = (url) => {
-          if (!url) return null;
-          try {
-            const parts = url.split('/track/');
-            if (parts.length > 1) {
-              return parts[1].split('?')[0];
-            }
-          } catch (e) {
-            return null;
-          }
-          return null;
-        };
-
-        function App() {
-          const [currentAlbum, setCurrentAlbum] = useState(ALBUMS[0]);
-          const [isPlaying, setIsPlaying] = useState(false);
-          const [showAbout, setShowAbout] = useState(false);
-          const [progress, setProgress] = useState(0);
-          const [volume, setVolume] = useState(70);
-          
-          const requestRef = useRef();
-          const audioRef = useRef(null);
-
-          // Handle Audio Playback (Native Audio)
-          useEffect(() => {
-            if (!audioRef.current) return;
-            audioRef.current.volume = volume / 100;
-
-            if (isPlaying && currentAlbum.previewUrl) {
-              const playPromise = audioRef.current.play();
-              if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                  console.log("Audio playback failed:", error);
-                });
-              }
-            } else if (!isPlaying) {
-              audioRef.current.pause();
-            }
-            
-            if (isPlaying) {
-              const animate = () => {
-                setProgress(prev => {
-                  if (prev >= 100) {
-                    setIsPlaying(false);
-                    return 0;
-                  }
-                  return prev + 0.1;
-                });
-                requestRef.current = requestAnimationFrame(animate);
-              };
-              requestRef.current = requestAnimationFrame(animate);
-            } else {
-              cancelAnimationFrame(requestRef.current);
-            }
-            return () => cancelAnimationFrame(requestRef.current);
-          }, [isPlaying, volume, currentAlbum]);
-
-          useEffect(() => {
-            setIsPlaying(false);
-            setProgress(0);
-          }, [currentAlbum]);
-
-          const handleAlbumSelect = (album) => {
-            setCurrentAlbum(album);
-            if (album.previewUrl) {
-               setTimeout(() => setIsPlaying(true), 800);
-            }
-          };
-
-          const togglePlay = () => {
-            setIsPlaying(!isPlaying);
-          };
-
-          const spotifyId = getSpotifyId(currentAlbum.spotifyUrl);
-
-          return (
-            <div className="h-screen bg-stone-900 text-stone-100 font-sans selection:bg-rose-500 selection:text-white overflow-hidden flex flex-col">
-              
-              <audio ref={audioRef} src={currentAlbum.previewUrl} onEnded={() => setIsPlaying(false)} />
-
-              {/* Navbar */}
-              <header className="px-6 py-4 flex justify-between items-center border-b border-stone-800 bg-stone-900/90 backdrop-blur-sm z-20 shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center">
-                    <Disc className="text-white w-5 h-5 animate-spin-slow" />
-                  </div>
-                  <h1 className="text-xl font-bold tracking-tight">BRYAN'S<span className="text-stone-500 font-normal"> 2025 FAVORITES</span></h1>
-                </div>
-                <button 
-                  onClick={() => setShowAbout(true)}
-                  className="flex items-center gap-2 text-xs font-medium text-stone-400 hover:text-rose-500 transition-colors"
-                >
-                  <User size={16} /> ABOUT
-                </button>
-              </header>
-
-              {/* Main Content Area */}
-              <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-                
-                {/* Left Side: The Turntable */}
-                <section className="
-                    shrink-0 z-30 bg-stone-900 border-b border-stone-800
-                    flex flex-row items-center p-4 gap-4 h-32 
-                    md:flex-1 md:flex-col md:justify-center md:p-8 md:h-auto md:border-b-0 md:border-r md:gap-0
-                ">
-                   
-                   <div className={`hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br ${currentAlbum.color} opacity-10 blur-[100px] rounded-full transition-colors duration-700`}></div>
-
-                   {/* --- MOBILE VIEW: COMPACT ROW --- */}
-                   <div className="md:hidden flex flex-row items-center gap-4 w-full h-full">
-                       {/* Spinning Record */}
-                       <div className="h-24 w-24 shrink-0 relative flex items-center justify-center">
-                           <div className={`w-full h-full rounded-full bg-black shadow-inner flex items-center justify-center ${isPlaying && !spotifyId ? 'animate-spin-slow' : ''}`}
-                                style={{backgroundImage: "repeating-radial-gradient(#1c1917 0, #1c1917 2px, #292524 3px, #292524 4px)"}}>
-                               <div className={`w-10 h-10 rounded-full bg-stone-800 overflow-hidden relative shadow-md flex items-center justify-center`}>
-                                   {currentAlbum.coverUrl ? (
-                                     <img src={currentAlbum.coverUrl} alt="" className="w-full h-full object-cover opacity-90" />
-                                   ) : (
-                                     <div className={`w-full h-full bg-gradient-to-br ${currentAlbum.color}`}></div>
-                                   )}
-                                   <div className="w-1.5 h-1.5 bg-stone-200 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 border border-stone-400"></div>
-                               </div>
-                           </div>
-                       </div>
-
-                       {/* Info & Controls */}
-                       <div className="flex flex-col flex-1 min-w-0 justify-center">
-                           <h2 className="text-lg font-bold text-white truncate leading-tight">{currentAlbum.title}</h2>
-                           <p className="text-sm text-rose-500 truncate mb-2">{currentAlbum.artist}</p>
-                           
-                           {/* Mobile Controls */}
-                           {spotifyId ? (
-                               <div className="w-full">
-                                   <iframe 
-                                     style={{borderRadius: "12px"}} 
-                                     src={`https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0`} 
-                                     width="100%" 
-                                     height="80" 
-                                     frameBorder="0" 
-                                     allowFullScreen="" 
-                                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                                     loading="lazy"
-                                     className="h-[80px]"
-                                   ></iframe>
-                               </div>
-                           ) : (
-                               <div className="flex items-center gap-3">
-                                   <button onClick={togglePlay} className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white">
-                                       {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" className="ml-0.5"/>}
-                                   </button>
-                                   <div className="text-xs text-stone-500 font-mono">
-                                       {isPlaying ? "PLAYING" : "PAUSED"}
-                                   </div>
-                               </div>
-                           )}
-                       </div>
-                   </div>
-
-
-                   {/* --- DESKTOP VIEW: FULL TURNTABLE --- */}
-                   <div className="hidden md:flex relative w-full max-w-lg aspect-square bg-stone-800 rounded-3xl shadow-2xl border border-stone-700 p-8 flex-col items-center justify-center overflow-hidden">
-                      
-                      {/* Tone Arm */}
-                      <div className={`absolute top-4 right-10 w-4 h-32 origin-top transition-transform duration-700 ease-in-out z-20 ${isPlaying ? 'rotate-24' : 'rotate-0'}`}>
-                          <div className="w-4 h-4 rounded-full bg-stone-400 absolute top-0 left-0 border-2 border-stone-600 shadow-md"></div>
-                          <div className="w-1.5 h-24 bg-stone-500 absolute top-2 left-1.5"></div>
-                          <div className="w-6 h-10 bg-stone-700 absolute bottom-0 -left-2 rounded-sm shadow-lg flex items-center justify-center">
-                            <div className="w-4 h-6 bg-stone-900 rounded-sm"></div>
-                          </div>
-                      </div>
-
-                      {/* The Platter & Record */}
-                      <div className="relative w-72 h-72 lg:w-96 lg:h-96 rounded-full bg-stone-950 border-4 border-stone-700 shadow-xl flex items-center justify-center">
-                         <div className={`w-[95%] h-[95%] rounded-full bg-black shadow-inner flex items-center justify-center transition-transform duration-[3s] ease-linear ${isPlaying ? 'animate-[spin_4s_linear_infinite]' : ''}`}
-                              style={{backgroundImage: "repeating-radial-gradient(#1c1917 0, #1c1917 2px, #292524 3px, #292524 4px)"}}>
-                            
-                            <div className={`w-32 h-32 rounded-full bg-stone-800 overflow-hidden relative shadow-md flex items-center justify-center group`}>
-                               {currentAlbum.coverUrl ? (
-                                 <img src={currentAlbum.coverUrl} alt={currentAlbum.title} className="w-full h-full object-cover opacity-90" />
-                               ) : (
-                                 <div className={`w-full h-full bg-gradient-to-br ${currentAlbum.color}`}></div>
-                               )}
-                               <div className="w-3 h-3 bg-stone-200 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 border border-stone-400"></div>
-                            </div>
-                         </div>
-                      </div>
-
-                      {/* Desktop Controls */}
-                      <div className="absolute bottom-6 left-0 right-0 px-8 flex justify-center items-center h-20">
-                         {spotifyId ? (
-                           <div className="w-full">
-                             <iframe 
-                               style={{borderRadius: "12px"}} 
-                               src={`https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0`} 
-                               width="100%" 
-                               height="80" 
-                               frameBorder="0" 
-                               allowFullScreen="" 
-                               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                               loading="lazy"
-                             ></iframe>
-                           </div>
-                         ) : (
-                           <div className="flex justify-between items-center w-full">
-                             <div className="flex gap-4">
-                                <button className="text-stone-400 hover:text-white transition-colors"><SkipBack size={20} /></button>
-                                <button 
-                                  onClick={togglePlay}
-                                  className="w-12 h-12 bg-rose-500 hover:bg-rose-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-rose-500/20 transition-all hover:scale-105 active:scale-95"
-                                >
-                                  {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1"/>}
-                                </button>
-                                <button className="text-stone-400 hover:text-white transition-colors"><SkipForward size={20} /></button>
-                             </div>
-                             <div className="flex items-center gap-2">
-                                <Volume2 size={16} className="text-stone-500" />
-                                <input 
-                                  type="range" 
-                                  min="0" 
-                                  max="100" 
-                                  value={volume} 
-                                  onChange={(e) => setVolume(e.target.value)}
-                                  className="w-20 h-1 bg-stone-600 rounded-lg appearance-none cursor-pointer"
-                                />
-                             </div>
-                           </div>
-                         )}
-                      </div>
-                   </div>
-
-                   {/* Desktop Text Info */}
-                   <div className="hidden md:block mt-8 text-center space-y-2 z-10">
-                      <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-stone-500 max-w-md mx-auto truncate">
-                        {currentAlbum.title}
-                      </h2>
-                      <p className="text-rose-500 font-medium tracking-wide text-base">{currentAlbum.artist}</p>
-                      
-                      <div className="flex items-center justify-center gap-4 mt-4">
-                         {!spotifyId && (
-                           <div className="flex items-center gap-2 text-xs font-mono text-stone-500">
-                               <div className="w-px h-4 bg-stone-700 mr-2"></div>
-                               <span className={`w-2 h-2 rounded-full bg-rose-500 ${isPlaying ? 'animate-pulse' : ''}`}></span>
-                               {isPlaying ? "PLAYING" : "PAUSED"}
-                           </div>
-                         )}
-                      </div>
-                   </div>
-
-                </section>
-
-                {/* Right Side / Bottom: The Crate */}
-                <section className="flex-1 bg-stone-950 border-t md:border-t-0 md:border-l border-stone-800 overflow-y-auto custom-scrollbar">
-                   <div className="p-4 md:p-8 pb-32">
-                      <h3 className="text-xs md:text-sm font-bold text-stone-500 uppercase tracking-widest mb-4 md:mb-6 sticky top-0 bg-stone-950 py-2 z-10 flex justify-between items-center">
-                         <span>The Crate (2025)</span>
-                         <span className="text-xs font-normal opacity-50">{ALBUMS.length} Records</span>
-                      </h3>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                         {ALBUMS.map((album) => (
-                            <div 
-                              key={album.id}
-                              onClick={() => handleAlbumSelect(album)}
-                              className={`group relative flex md:block aspect-auto md:aspect-square bg-stone-900 rounded-lg cursor-pointer overflow-hidden border transition-all duration-300 ${currentAlbum.id === album.id ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-stone-800 hover:border-stone-600'}`}
-                            >
-                               <div className="absolute top-0 left-0 bg-rose-500 text-white text-[10px] md:text-xs font-black px-2 md:px-3 py-1 md:py-1.5 rounded-br-lg z-20 shadow-lg pointer-events-none">
-                                  #{album.id}
-                               </div>
-
-                               {/* Mobile Layout: Image on Left, Text on Right */}
-                               <div className="w-24 h-24 md:w-full md:h-full md:absolute md:inset-0 shrink-0 relative">
-                                   {album.coverUrl ? (
-                                     <img src={album.coverUrl} alt="" className="w-full h-full object-cover md:opacity-60 md:transition-transform md:duration-500 md:group-hover:scale-110" />
-                                   ) : (
-                                     <div className={`w-full h-full bg-gradient-to-br ${album.color} opacity-80`}></div>
-                                   )}
-                                   {/* Mobile Overlay Gradient */}
-                                   <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-black/20 to-black/60 mix-blend-multiply"></div>
-                               </div>
-                               
-                               {/* Vinyl sliding out effect (Desktop Only) */}
-                               <div className="hidden md:block absolute top-2 right-2 -mr-8 transition-all duration-500 group-hover:mr-0 opacity-0 group-hover:opacity-100">
-                                  <Disc className="text-black/50 w-24 h-24 animate-spin-slow" />
-                               </div>
-
-                               <div className="flex-1 p-3 md:p-6 flex flex-col justify-center md:justify-end md:absolute md:inset-0 md:bg-gradient-to-t md:from-black/95 md:via-black/50 md:to-transparent">
-                                  <div className="transform md:transition-transform md:duration-300 md:group-hover:-translate-y-2">
-                                     <p className="text-[10px] md:text-xs font-bold text-stone-400 md:text-white/60 mb-0.5 md:mb-1 uppercase tracking-widest">{album.genre}</p>
-                                     <h4 className="text-base md:text-xl font-bold text-white leading-tight mb-0.5 md:mb-1 drop-shadow-md line-clamp-1 md:line-clamp-none">{album.title}</h4>
-                                     <p className="text-xs md:text-sm text-stone-300 md:text-white/90 drop-shadow-sm">{album.artist}</p>
-                                  </div>
-
-                                  <div className="hidden md:block h-0 group-hover:h-auto overflow-hidden transition-all duration-500">
-                                     <p className="text-xs text-stone-300 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 leading-relaxed border-l-2 border-rose-500 pl-2">
-                                       {album.blurb}
-                                     </p>
-                                  </div>
-                                  
-                                  {/* Mobile Blurb - Visible by default */}
-                                  <p className="md:hidden text-xs text-stone-400 mt-1.5 border-l-2 border-stone-700 pl-2">
-                                    {album.blurb}
-                                  </p>
-                               </div>
-                            </div>
-                         ))}
-                         
-                      </div>
-                   </div>
-                </section>
-                
-                {/* Global Progress Bar (Fixed at bottom) */}
-                {isPlaying && currentAlbum.previewUrl && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-stone-800 z-50">
-                    <div 
-                      className="h-full bg-rose-500 transition-all duration-300 ease-linear shadow-[0_0_10px_rgba(244,63,94,0.5)]" 
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                )}
-                
-              </main>
-
-                {/* About Modal */}
-                {showAbout && (
-                   <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-                      <div className="bg-stone-900 w-full max-w-sm p-8 rounded-2xl shadow-2xl border border-stone-700 text-center relative">
-                        <button 
-                            onClick={() => setShowAbout(false)} 
-                            className="absolute top-4 right-4 text-stone-500 hover:text-white transition-colors"
-                        >
-                            <X size={20} />
-                        </button>
-                        
-                        <div className="space-y-6 mt-4">
-                           <div>
-                               <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">2025 Favorites</h2>
-                               <div className="w-12 h-1 bg-rose-500 mx-auto rounded-full"></div>
-                           </div>
-                           
-                           <div className="space-y-3 text-stone-400 leading-relaxed text-sm">
-                               <p className="font-medium text-white">my favorite albums from 2025... i hope you enjoy!</p>
-                               <p className="opacity-80">click around, spin some records, and maybe find something new.</p>
-                           </div>
-
-                           <div className="pt-6 border-t border-stone-800">
-                               <p className="text-xs text-stone-500 uppercase tracking-widest font-bold">Created by</p>
-                               <p className="text-rose-500 font-bold mt-1">Bryan</p>
-                           </div>
-                        </div>
-                      </div>
-                   </div>
-                )}
-            </div>
-          );
+        } else if (!isPlaying) {
+          audioRef.current.pause();
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+        if (isPlaying) {
+          const animate = () => {
+            setProgress(prev => {
+              if (prev >= 100) {
+                setIsPlaying(false);
+                return 0;
+              }
+              return prev + 0.1;
+            });
+            requestRef.current = requestAnimationFrame(animate);
+          };
+          requestRef.current = requestAnimationFrame(animate);
+        } else {
+          if (requestRef.current) cancelAnimationFrame(requestRef.current);
+        }
+        return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
+      }, [isPlaying, volume, currentAlbum]);
+
+      useEffect(() => {
+        setIsPlaying(false);
+        setProgress(0);
+        // collapse mobile accordion when selecting a different album
+        setOpenAccordion(null);
+      }, [currentAlbum]);
+
+      const handleAlbumSelect = (album) => {
+        setCurrentAlbum(album);
+        // on mobile, selecting should also close any open accordion for that item so user can re-open intentionally
+        setOpenAccordion(null);
+        // optionally autoplay for albums with previews after short delay
+        if (album.previewUrl) {
+          setTimeout(() => setIsPlaying(true), 600);
+        }
+      };
+
+      const togglePlay = (e) => {
+        if (e) e.stopPropagation();
+        setIsPlaying(prev => !prev);
+      };
+
+      const toggleAccordion = (id, e) => {
+        if (e) e.stopPropagation();
+        setOpenAccordion(prev => prev === id ? null : id);
+      };
+
+      return (
+        <div className="h-screen bg-stone-900 text-stone-100 font-sans selection:bg-rose-500 selection:text-white overflow-hidden flex flex-col">
+          <audio ref={audioRef} src={currentAlbum.previewUrl} onEnded={() => setIsPlaying(false)} />
+
+          {/* Navbar */}
+          <header className="px-6 py-4 flex justify-between items-center border-b border-stone-800 bg-stone-900/90 backdrop-blur-sm z-20 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center">
+                <Disc className="text-white w-5 h-5 animate-spin-slow" />
+              </div>
+              <h1 className="text-xl font-bold tracking-tight">BRYAN'S<span className="text-stone-500 font-normal"> 2025 FAVORITES</span></h1>
+            </div>
+            <button onClick={() => setShowAbout(true)} className="flex items-center gap-2 text-xs font-medium text-stone-400 hover:text-rose-500 transition-colors">
+              <User size={16} /> ABOUT
+            </button>
+          </header>
+
+          <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+            {/* Left: Turntable / Player */}
+            <section className="shrink-0 z-30 bg-stone-900 border-b border-stone-800 flex flex-row items-center p-4 gap-4 h-32 md:flex-1 md:flex-col md:justify-center md:p-8 md:h-auto md:border-b-0 md:border-r md:gap-0">
+              {/* decorative gradient behind turntable (desktop only) */}
+              <div className={`hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-rose-500 to-purple-700 opacity-10 blur-[100px] rounded-full pointer-events-none`} />
+
+              {/* MOBILE: compact row */}
+              <div className="md:hidden flex flex-row items-center gap-4 w-full h-full">
+                <div className="h-24 w-24 shrink-0 relative flex items-center justify-center">
+                  <div className={`w-full h-full rounded-full bg-black shadow-inner flex items-center justify-center ${isPlaying ? 'animate-spin-slow' : ''}`}
+                       style={{backgroundImage: "repeating-radial-gradient(#1c1917 0, #1c1917 2px, #292524 3px, #292524 4px)"}}>
+                    <div className={`w-10 h-10 rounded-full bg-stone-800 overflow-hidden relative shadow-md flex items-center justify-center`}>
+                      {currentAlbum.coverUrl ? <img src={currentAlbum.coverUrl} alt="" className="w-full h-full object-cover opacity-90" /> : <div className={`w-full h-full bg-gradient-to-br ${currentAlbum.color}`}></div>}
+                      <div className="w-1.5 h-1.5 bg-stone-200 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 border border-stone-400"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col flex-1 min-w-0 justify-center">
+                  <h2 className="text-lg font-bold text-white truncate leading-tight">{currentAlbum.title}</h2>
+                  <p className="text-sm text-rose-500 truncate mb-2">{currentAlbum.artist}</p>
+
+                  {getSpotifyId(currentAlbum.spotifyUrl) ? (
+                    <div className="w-full">
+                      <iframe style={{borderRadius: "12px"}} src={`https://open.spotify.com/embed/track/${getSpotifyId(currentAlbum.spotifyUrl)}?utm_source=generator&theme=0`} width="100%" height="80" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" className="h-[80px]"></iframe>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <button onClick={togglePlay} className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center text-white">
+                        {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
+                      </button>
+                      <div className="text-xs text-stone-500 font-mono">{isPlaying ? "PLAYING" : "PAUSED"}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* DESKTOP: full turntable */}
+              <div className="hidden md:flex relative w-full max-w-lg aspect-square bg-stone-800 rounded-3xl shadow-2xl border border-stone-700 p-8 flex-col items-center justify-center overflow-hidden">
+                {/* Tone arm */}
+                <div className={`absolute top-4 right-10 w-4 h-32 origin-top transition-transform duration-700 ease-in-out z-20 ${isPlaying ? 'rotate-24' : 'rotate-0'}`}>
+                  <div className="w-4 h-4 rounded-full bg-stone-400 absolute top-0 left-0 border-2 border-stone-600 shadow-md"></div>
+                  <div className="w-1.5 h-24 bg-stone-500 absolute top-2 left-1.5"></div>
+                  <div className="w-6 h-10 bg-stone-700 absolute bottom-0 -left-2 rounded-sm shadow-lg flex items-center justify-center">
+                    <div className="w-4 h-6 bg-stone-900 rounded-sm"></div>
+                  </div>
+                </div>
+
+                {/* Platter & record */}
+                <div className="relative w-72 h-72 lg:w-96 lg:h-96 rounded-full bg-stone-950 border-4 border-stone-700 shadow-xl flex items-center justify-center">
+                  <div className={`w-[95%] h-[95%] rounded-full bg-black shadow-inner flex items-center justify-center transition-transform duration-[3s] ease-linear ${isPlaying ? 'animate-spin-slow' : ''}`} style={{backgroundImage: "repeating-radial-gradient(#1c1917 0, #1c1917 2px, #292524 3px, #292524 4px)"}}>
+                    <div className={`w-32 h-32 rounded-full bg-stone-800 overflow-hidden relative shadow-md flex items-center justify-center group`}>
+                      {currentAlbum.coverUrl ? <img src={currentAlbum.coverUrl} alt={currentAlbum.title} className="w-full h-full object-cover opacity-90" /> : <div className={`w-full h-full bg-gradient-to-br ${currentAlbum.color}`}></div>}
+                      <div className="w-3 h-3 bg-stone-200 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 border border-stone-400"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Controls */}
+                <div className="absolute bottom-6 left-0 right-0 px-8 flex justify-center items-center h-20">
+                  {getSpotifyId(currentAlbum.spotifyUrl) ? (
+                    <div className="w-full">
+                      <iframe style={{borderRadius: "12px"}} src={`https://open.spotify.com/embed/track/${getSpotifyId(currentAlbum.spotifyUrl)}?utm_source=generator&theme=0`} width="100%" height="80" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex gap-4">
+                        <button className="text-stone-400 hover:text-white transition-colors"><SkipBack size={20} /></button>
+                        <button onClick={togglePlay} className="w-12 h-12 bg-rose-500 hover:bg-rose-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all">
+                          {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+                        </button>
+                        <button className="text-stone-400 hover:text-white transition-colors"><SkipForward size={20} /></button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Volume2 size={16} className="text-stone-500" />
+                        <input type="range" min="0" max="100" value={volume} onChange={(e) => setVolume(Number(e.target.value))} className="w-20 h-1 bg-stone-600 rounded-lg appearance-none cursor-pointer" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Desktop text info */}
+                <div className="hidden md:block mt-8 text-center space-y-2 z-10">
+                  <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-stone-500 max-w-md mx-auto truncate">
+                    {currentAlbum.title}
+                  </h2>
+                  <p className="text-rose-500 font-medium tracking-wide text-base">{currentAlbum.artist}</p>
+
+                  <div className="flex items-center justify-center gap-4 mt-4">
+                    {!getSpotifyId(currentAlbum.spotifyUrl) && (
+                      <div className="flex items-center gap-2 text-xs font-mono text-stone-500">
+                        <div className="w-px h-4 bg-stone-700 mr-2"></div>
+                        <span className={`w-2 h-2 rounded-full bg-rose-500 ${isPlaying ? 'animate-pulse' : ''}`}></span>
+                        {isPlaying ? "PLAYING" : "PAUSED"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Right: The Crate */}
+            <section className="flex-1 bg-stone-950 border-t md:border-t-0 md:border-l border-stone-800 overflow-y-auto custom-scrollbar">
+              <div className="p-4 md:p-8 pb-32">
+                <h3 className="text-xs md:text-sm font-bold text-stone-500 uppercase tracking-widest mb-4 md:mb-6 sticky top-0 bg-stone-950 py-2 z-10 flex justify-between items-center">
+                  <span>The Crate (2025)</span>
+                  <span className="text-xs font-normal opacity-50">{ALBUMS.length} Records</span>
+                </h3>
+
+                {/* --- DESKTOP GRID (md and up) --- */}
+                <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {ALBUMS.map((album) => (
+                    <div key={album.id} onClick={() => handleAlbumSelect(album)} role="button" tabIndex={0}
+                         className={`group relative bg-stone-900 rounded-lg cursor-pointer overflow-hidden border transition-all duration-300 ${currentAlbum.id === album.id ? 'ring-2 ring-rose-500' : 'border-stone-800'}`}
+                         aria-pressed={currentAlbum.id === album.id} aria-label={`${album.title} by ${album.artist}`}>
+                      <div className="absolute top-0 left-0 bg-rose-500 text-white text-[10px] md:text-xs font-black px-2 py-1 rounded-br-lg z-20 shadow-lg">
+                        #{album.id}
+                      </div>
+
+                      <div className="w-full h-44 md:h-56 shrink-0 relative">
+                        {album.coverUrl ? (
+                          <img src={album.coverUrl} alt={`${album.title} cover`} className="w-full h-full object-cover md:opacity-60 md:transition-transform md:duration-500 md:group-hover:scale-110" />
+                        ) : (
+                          <div className={`w-full h-full bg-gradient-to-br ${album.color} opacity-80`}></div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/60 mix-blend-multiply pointer-events-none"></div>
+                      </div>
+
+                      <div className="p-4 md:p-6">
+                        <p className="text-[10px] font-bold text-stone-400 mb-1 uppercase tracking-widest">{album.genre}</p>
+                        <h4 className="text-base md:text-xl font-bold text-white leading-tight mb-1 line-clamp-1">{album.title}</h4>
+                        <p className="text-xs md:text-sm text-stone-300 mb-2">{album.artist}</p>
+
+                        <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-500">
+                          <p className="text-xs text-stone-300 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 leading-relaxed border-l-2 border-rose-500 pl-3">
+                            {album.blurb}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* --- MOBILE: Accordion list (md:hidden) --- */}
+                <div className="md:hidden flex flex-col">
+                  {ALBUMS.map((album) => {
+                    const isOpen = openAccordion === album.id;
+                    const spotifyId = getSpotifyId(album.spotifyUrl);
+                    return (
+                      <div key={album.id} className={`mb-3 bg-stone-900 rounded-lg border border-stone-800 overflow-hidden`}>
+
+                        <button
+                          onClick={() => { handleAlbumSelect(album); /* selecting album also focuses it */ }}
+                          className="w-full text-left px-4 py-3 flex items-center justify-between gap-3"
+                          aria-expanded={isOpen}
+                          aria-controls={`mobile-blurb-${album.id}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 flex-shrink-0 rounded overflow-hidden bg-stone-800">
+                              {album.coverUrl ? <img src={album.coverUrl} alt={`${album.title} cover`} className="w-full h-full object-cover" /> : <div className={`w-full h-full bg-gradient-to-br ${album.color}`}></div>}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-sm font-bold text-white truncate">{album.title}</div>
+                              <div className="text-xs text-stone-400 truncate">{album.artist}</div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="text-xs text-stone-400">{album.year}</div>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleAccordion(album.id); }}
+                              className="p-2 rounded-md text-rose-400 hover:bg-rose-500/10"
+                              aria-label={isOpen ? `Collapse details for ${album.title}` : `Expand details for ${album.title}`}
+                            >
+                              {isOpen ? <ChevronUp /> : <ChevronDown />}
+                            </button>
+                          </div>
+                        </button>
+
+                        {/* Expandable content */}
+                        <div id={`mobile-blurb-${album.id}`} className={`px-4 pb-4 transition-all duration-300 ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`} aria-hidden={!isOpen}>
+                          <div className="text-xs text-stone-300 leading-relaxed mb-3">
+                            {album.blurb}
+                          </div>
+
+                          {/* Inline controls / preview on mobile when expanded */}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                              {!spotifyId ? (
+                                <button onClick={(e) => { e.stopPropagation(); setCurrentAlbum(album); setIsPlaying(prev => !prev); }} className="w-9 h-9 bg-rose-500 rounded-full flex items-center justify-center text-white">
+                                  {currentAlbum.id === album.id && isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                                </button>
+                              ) : (
+                                <a href={album.spotifyUrl} target="_blank" rel="noopener noreferrer" className="text-rose-400 text-xs font-semibold">
+                                  Open in Spotify
+                                </a>
+                              )}
+                              <div className="text-xs text-stone-400">{album.genre}</div>
+                            </div>
+
+                            <div className="text-xs text-stone-400">Rating: {album.rating}</div>
+                          </div>
+
+                          {/* If album has spotify embed and user expanded, show compact iframe */}
+                          {isOpen && spotifyId && (
+                            <div className="mt-3">
+                              <iframe title={`spotify-${album.id}`} style={{borderRadius: "8px"}} src={`https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0`} width="100%" height="80" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+              </div>
+            </section>
+
+            {/* Global progress bar */}
+            {isPlaying && currentAlbum.previewUrl && (
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-stone-800 z-50">
+                <div className="h-full bg-rose-500 transition-all duration-300 ease-linear shadow-[0_0_10px_rgba(244,63,94,0.5)]" style={{ width: `${progress}%` }} />
+              </div>
+            )}
+          </main>
+
+          {/* About modal */}
+          {showAbout && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+              <div className="bg-stone-900 w-full max-w-sm p-8 rounded-2xl shadow-2xl border border-stone-700 text-center relative">
+                <button onClick={() => setShowAbout(false)} className="absolute top-4 right-4 text-stone-500 hover:text-white transition-colors">
+                  <X size={20} />
+                </button>
+
+                <div className="space-y-6 mt-4">
+                  <div>
+                    <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">2025 Favorites</h2>
+                    <div className="w-12 h-1 bg-rose-500 mx-auto rounded-full"></div>
+                  </div>
+
+                  <div className="space-y-3 text-stone-400 leading-relaxed text-sm">
+                    <p className="font-medium text-white">my favorite albums from 2025... i hope you enjoy!</p>
+                    <p className="opacity-80">click around, spin some records, and maybe find something new.</p>
+                  </div>
+
+                  <div className="pt-6 border-t border-stone-800">
+                    <p className="text-xs text-stone-500 uppercase tracking-widest font-bold">Created by</p>
+                    <p className="text-rose-500 font-bold mt-1">Bryan</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
